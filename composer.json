@@ -21,8 +21,9 @@
         "php": "^7.2",
         "doctrine/orm": "^2",
         "doctrine/persistence": "^1",
-        "symfony/http-kernel": "^4",
-        "symfony/dependency-injection": "^4"
+        "symfony/config": "^4",
+        "symfony/dependency-injection": "^4",
+        "symfony/http-kernel": "^4"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2",

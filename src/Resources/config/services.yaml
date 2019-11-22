@@ -6,4 +6,3 @@ services:
 
     BinSoul\Symfony\Bundle\Doctrine\:
         resource: '../../*'
-        exclude: '../../../tests/*'
