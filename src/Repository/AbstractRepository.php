@@ -56,6 +56,26 @@ abstract class AbstractRepository
     }
 
     /**
+     * Returns the primary table's schema name.
+     *
+     * @return string|null
+     */
+    public function getSchemaName(): ?string
+    {
+        return $this->getManager()->getClassMetadata($this->entityClass)->getSchemaName();
+    }
+
+    /**
+     * Returns the name of the primary table.
+     *
+     * @return string
+     */
+    public function getTableName(): string
+    {
+        return $this->getManager()->getClassMetadata($this->entityClass)->getTableName();
+    }
+
+    /**
      * Returns a EntityRepository instance.
      */
     protected function getRepository(): EntityRepository
