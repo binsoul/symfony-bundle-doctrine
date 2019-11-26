@@ -76,6 +76,18 @@ abstract class AbstractRepository
     }
 
     /**
+     * Tests if the primary table exists.
+     *
+     * @return bool
+     */
+    public function tableExists(): bool
+    {
+        $schemaManager = $this->getManager()->getConnection()->getSchemaManager();
+
+        return $schemaManager->tablesExist([$this->getTableName()]);
+    }
+
+    /**
      * Returns a EntityRepository instance.
      */
     protected function getRepository(): EntityRepository
