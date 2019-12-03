@@ -6,6 +6,6 @@ namespace BinSoul\Symfony\Bundle\Doctrine;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class DoctrineBundle extends Bundle
+class BinsoulDoctrineBundle extends Bundle
 {
 }
