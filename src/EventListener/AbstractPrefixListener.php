@@ -1,6 +1,6 @@
 <?php
 
-namespace BinSoul\Symfony\Bundle\Doctrine;
+namespace BinSoul\Symfony\Bundle\Doctrine\EventListener;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
