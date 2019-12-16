@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace BinSoul\Symfony\Bundle\Doctrine\Repository;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * Provides basic methods for repositories.
