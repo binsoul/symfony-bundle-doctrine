@@ -51,7 +51,9 @@ abstract class AbstractPrefixListener implements EventSubscriber
         }
 
         // Generate table
-        $classMetadata->setPrimaryTable(['name' => $this->addPrefix($classMetadata->getTableName())]);
+        if (isset($classMetadata->table['name'])) {
+            $classMetadata->setPrimaryTable(['name' => $this->addPrefix($classMetadata->table['name'])]);
+        }
 
         // Generate indexes
         if (isset($classMetadata->table['indexes'])) {
