@@ -57,8 +57,6 @@ abstract class AbstractRepository
 
     /**
      * Returns the primary table's schema name.
-     *
-     * @return string|null
      */
     public function getSchemaName(): ?string
     {
@@ -67,8 +65,6 @@ abstract class AbstractRepository
 
     /**
      * Returns the name of the primary table.
-     *
-     * @return string
      */
     public function getTableName(): string
     {
@@ -77,8 +73,6 @@ abstract class AbstractRepository
 
     /**
      * Tests if the primary table exists.
-     *
-     * @return bool
      */
     public function tableExists(): bool
     {
@@ -96,7 +90,8 @@ abstract class AbstractRepository
 
         if ($this->repository === null) {
             $repository = $this->getManager()->getRepository($this->entityClass);
-            if (!$repository instanceof EntityRepository) {
+
+            if (! $repository instanceof EntityRepository) {
                 throw new \RuntimeException(sprintf('Manager returned %s.', get_class($repository)));
             }
 
@@ -115,7 +110,8 @@ abstract class AbstractRepository
 
         if ($this->manager === null) {
             $manager = $this->registry->getManagerForClass($this->entityClass) ?? $this->registry->getManager();
-            if (!$manager instanceof EntityManager) {
+
+            if (! $manager instanceof EntityManager) {
                 throw new \RuntimeException(sprintf('Registry returned %s.', get_class($manager)));
             }
 
@@ -136,11 +132,13 @@ abstract class AbstractRepository
 
         $this->repository = null;
         $manager = $this->registry->getManagerForClass($this->entityClass) ?? $this->registry->getManager();
-        if (!$manager instanceof EntityManager) {
+
+        if (! $manager instanceof EntityManager) {
             throw new \RuntimeException(sprintf('Registry returned %s.', get_class($manager)));
         }
 
         $this->manager = $manager;
+
         if ($this->manager->isOpen()) {
             return;
         }
@@ -148,7 +146,8 @@ abstract class AbstractRepository
         foreach ($this->registry->getManagers() as $name => $object) {
             if ($object === $this->manager) {
                 $manager = $this->registry->resetManager($name);
-                if (!$manager instanceof EntityManager) {
+
+                if (! $manager instanceof EntityManager) {
                     throw new \RuntimeException(sprintf('Registry returned %s.', get_class($manager)));
                 }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BinSoul\Symfony\Bundle\Doctrine\EventListener;
 
 use Doctrine\Common\EventSubscriber;
@@ -20,6 +22,7 @@ abstract class AbstractPrefixListener implements EventSubscriber
      * @var string
      */
     private $prefix;
+
     /**
      * @var string
      */
@@ -39,13 +42,14 @@ abstract class AbstractPrefixListener implements EventSubscriber
         return [Events::loadClassMetadata];
     }
 
-    public function loadClassMetadata(LoadClassMetadataEventArgs $args)
+    public function loadClassMetadata(LoadClassMetadataEventArgs $args): void
     {
         if ($this->prefix === '') {
             return;
         }
 
         $classMetadata = $args->getClassMetadata();
+
         if (strpos($classMetadata->namespace, $this->namespace) !== 0) {
             return;
         }
@@ -73,12 +77,14 @@ abstract class AbstractPrefixListener implements EventSubscriber
         // Generate sequences
         $em = $args->getEntityManager();
         $platform = $em->getConnection()->getDatabasePlatform();
+
         if ($platform instanceof PostgreSqlPlatform) {
             if ($classMetadata->isIdGeneratorSequence()) {
                 $newDefinition = $classMetadata->sequenceGeneratorDefinition;
                 $newDefinition['sequenceName'] = $this->addPrefix($newDefinition['sequenceName']);
 
                 $classMetadata->setSequenceGeneratorDefinition($newDefinition);
+
                 if (isset($classMetadata->idGenerator)) {
                     $sequenceGenerator = new SequenceGenerator(
                         $em->getConfiguration()->getQuoteStrategy()->getSequenceName(
@@ -95,9 +101,10 @@ abstract class AbstractPrefixListener implements EventSubscriber
                 $sequenceName = null;
                 $fieldName = $classMetadata->identifier ? $classMetadata->getSingleIdentifierFieldName() : null;
                 $columnName = $classMetadata->getSingleIdentifierColumnName();
-                $sequenceName = $classMetadata->getTableName().'_'.$columnName.'_seq';
+                $sequenceName = $classMetadata->getTableName() . '_' . $columnName . '_seq';
 
                 $definition = ['sequenceName' => $platform->fixSchemaElementName($sequenceName)];
+
                 if (isset($classMetadata->fieldMappings[$fieldName]['quoted']) || isset($classMetadata->table['quoted'])) {
                     $definition['quoted'] = true;
                 }
@@ -108,7 +115,7 @@ abstract class AbstractPrefixListener implements EventSubscriber
                     $platform
                 );
 
-                $generator = ($fieldName && $classMetadata->fieldMappings[$fieldName]['type'] === 'bigint')
+                $generator = $fieldName && $classMetadata->fieldMappings[$fieldName]['type'] === 'bigint'
                     ? new BigIntegerIdentityGenerator($sequenceName)
                     : new IdentityGenerator($sequenceName);
 
@@ -117,12 +124,12 @@ abstract class AbstractPrefixListener implements EventSubscriber
         }
     }
 
-    private function addPrefix($name): string
+    private function addPrefix(string $name): string
     {
         if (strpos($name, $this->prefix) === 0) {
             return $name;
         }
 
-        return $this->prefix.$name;
+        return $this->prefix . $name;
     }
 }
