@@ -63,7 +63,7 @@ abstract class AbstractPrefixListener implements EventSubscriber
         if (isset($classMetadata->table['indexes'])) {
             foreach ($classMetadata->table['indexes'] as $index => $value) {
                 unset($classMetadata->table['indexes'][$index]);
-                $classMetadata->table['indexes'][$this->addPrefix($index)] = $value;
+                $classMetadata->table['indexes'][$this->addPrefix((string) $index)] = $value;
             }
         }
 
