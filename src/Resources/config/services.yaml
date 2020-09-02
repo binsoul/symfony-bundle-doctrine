@@ -6,3 +6,7 @@ services:
 
     BinSoul\Symfony\Bundle\Doctrine\:
         resource: '../../*'
+
+    BinSoul\Symfony\Bundle\Doctrine\EventListener\TimestampableListener:
+        tags:
+            - { name: doctrine.event_subscriber}
