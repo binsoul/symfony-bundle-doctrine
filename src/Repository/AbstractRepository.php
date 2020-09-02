@@ -78,7 +78,7 @@ abstract class AbstractRepository
     {
         $schemaManager = $this->getManager()->getConnection()->getSchemaManager();
 
-        return $schemaManager->tablesExist([$this->getTableName()]);
+        return $schemaManager !== null && $schemaManager->tablesExist([$this->getTableName()]);
     }
 
     /**
