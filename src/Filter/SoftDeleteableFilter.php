@@ -30,7 +30,7 @@ class SoftDeleteableFilter extends SQLFilter
         $connection = $this->getConnection();
         $platform = $connection->getDatabasePlatform();
 
-        return $platform->getIsNullExpression($targetTableAlias . '.deletedAt');
+        return $platform->getIsNullExpression($targetTableAlias . '.' . $targetEntity->getColumnName('deletedAt'));
     }
 
     /**
