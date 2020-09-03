@@ -8,5 +8,4 @@ services:
         resource: '../../*'
 
     BinSoul\Symfony\Bundle\Doctrine\EventListener\TimestampableListener:
-        tags:
-            - { name: doctrine.event_subscriber}
+        tags: ['doctrine.event_subscriber']
