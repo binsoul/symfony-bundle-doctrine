@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
+use RuntimeException;
 
 /**
  * Provides basic methods for repositories.
@@ -92,7 +93,7 @@ abstract class AbstractRepository
             $repository = $this->getManager()->getRepository($this->entityClass);
 
             if (! $repository instanceof EntityRepository) {
-                throw new \RuntimeException(sprintf('Manager returned %s.', get_class($repository)));
+                throw new RuntimeException(sprintf('Manager returned %s.', get_class($repository)));
             }
 
             $this->repository = $repository;
@@ -112,7 +113,7 @@ abstract class AbstractRepository
             $manager = $this->registry->getManagerForClass($this->entityClass) ?? $this->registry->getManager();
 
             if (! $manager instanceof EntityManager) {
-                throw new \RuntimeException(sprintf('Registry returned %s.', get_class($manager)));
+                throw new RuntimeException(sprintf('Registry returned %s.', get_class($manager)));
             }
 
             $this->manager = $manager;
@@ -134,7 +135,7 @@ abstract class AbstractRepository
         $manager = $this->registry->getManagerForClass($this->entityClass) ?? $this->registry->getManager();
 
         if (! $manager instanceof EntityManager) {
-            throw new \RuntimeException(sprintf('Registry returned %s.', get_class($manager)));
+            throw new RuntimeException(sprintf('Registry returned %s.', get_class($manager)));
         }
 
         $this->manager = $manager;
@@ -148,7 +149,7 @@ abstract class AbstractRepository
                 $manager = $this->registry->resetManager($name);
 
                 if (! $manager instanceof EntityManager) {
-                    throw new \RuntimeException(sprintf('Registry returned %s.', get_class($manager)));
+                    throw new RuntimeException(sprintf('Registry returned %s.', get_class($manager)));
                 }
 
                 $this->manager = $manager;
