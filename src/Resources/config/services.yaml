@@ -12,3 +12,6 @@ services:
 
     BinSoul\Symfony\Bundle\Doctrine\EventListener\LinkableListener:
         tags: ['doctrine.event_subscriber']
+
+    BinSoul\Symfony\Bundle\Doctrine\EventListener\SoftDeleteableListener:
+        tags: ['doctrine.event_subscriber']

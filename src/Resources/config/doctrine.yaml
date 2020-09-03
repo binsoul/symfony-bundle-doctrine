@@ -1,0 +1,8 @@
+doctrine:
+    orm:
+        entity_managers:
+            default:
+                filters:
+                    binsoul-softdeleteable:
+                        class: BinSoul\Symfony\Bundle\Doctrine\Filter\SoftDeleteableFilter
+                        enabled: true
