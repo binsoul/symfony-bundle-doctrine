@@ -9,3 +9,6 @@ services:
 
     BinSoul\Symfony\Bundle\Doctrine\EventListener\TimestampableListener:
         tags: ['doctrine.event_subscriber']
+
+    BinSoul\Symfony\Bundle\Doctrine\EventListener\LinkableListener:
+        tags: ['doctrine.event_subscriber']
