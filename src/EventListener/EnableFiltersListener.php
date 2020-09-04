@@ -25,12 +25,12 @@ class EnableFiltersListener implements EventSubscriberInterface
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, array<int, string|int>>
      */
     public static function getSubscribedEvents(): array
     {
         return [
-            KernelEvents::REQUEST => 'onKernelRequest',
+            KernelEvents::REQUEST => ['onKernelRequest', 160],
         ];
     }
 
