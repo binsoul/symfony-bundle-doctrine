@@ -14,7 +14,7 @@ final class SoftDeleteableListener implements EventSubscriber
 {
     use TimestampableTrait;
 
-    public function onFlush(OnFlushEventArgs $eventArgs)
+    public function onFlush(OnFlushEventArgs $eventArgs): void
     {
         $em = $eventArgs->getEntityManager();
         $unitOfWork = $em->getUnitOfWork();

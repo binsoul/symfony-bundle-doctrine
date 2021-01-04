@@ -33,9 +33,6 @@ class SoftDeleteableFilter extends SQLFilter
         return $platform->getIsNullExpression($targetTableAlias . '.' . $targetEntity->getColumnName('deletedAt'));
     }
 
-    /**
-     * @param string $class
-     */
     public function disableForEntity(string $class): void
     {
         $this->disabled[$class] = true;
@@ -43,9 +40,6 @@ class SoftDeleteableFilter extends SQLFilter
         $this->setParameter(sprintf('disabled_%s', $class), true);
     }
 
-    /**
-     * @param string $class
-     */
     public function enableForEntity(string $class): void
     {
         unset($this->disabled[$class]);
