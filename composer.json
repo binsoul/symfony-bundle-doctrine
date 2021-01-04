@@ -18,9 +18,9 @@
         }
     ],
     "require": {
-        "php": "^7.2",
+        "php": "^7.3",
         "doctrine/orm": "^2",
-        "doctrine/persistence": "^1|^2",
+        "doctrine/persistence": "^2",
         "symfony/config": "^5",
         "symfony/dependency-injection": "^5",
         "symfony/http-kernel": "^5"
