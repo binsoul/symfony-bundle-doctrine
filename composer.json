@@ -28,7 +28,7 @@
     "require-dev": {
         "binsoul/coding-standard": "^1",
         "phpstan/phpstan": "^0.12",
-        "symplify/easy-coding-standard-prefixed": "^9"
+        "symplify/easy-coding-standard": "^9"
     },
     "autoload": {
         "psr-4": {
