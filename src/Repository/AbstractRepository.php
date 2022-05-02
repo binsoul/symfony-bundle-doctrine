@@ -20,9 +20,9 @@ abstract class AbstractRepository
 
     private ManagerRegistry $registry;
 
-    private ?EntityManager $manager;
+    private ?EntityManager $manager = null;
 
-    private ?EntityRepository $repository;
+    private ?EntityRepository $repository = null;
 
     /**
      * Constructs an instance of this class.
