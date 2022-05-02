@@ -6,8 +6,8 @@ namespace BinSoul\Symfony\Bundle\Doctrine\Repository;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 use RuntimeException;
 
@@ -16,25 +16,13 @@ use RuntimeException;
  */
 abstract class AbstractRepository
 {
-    /**
-     * @var string
-     */
-    private $entityClass;
+    private string $entityClass;
 
-    /**
-     * @var ManagerRegistry
-     */
-    private $registry;
+    private ManagerRegistry $registry;
 
-    /**
-     * @var EntityManager|null
-     */
-    private $manager;
+    private ?EntityManager $manager;
 
-    /**
-     * @var EntityRepository|null
-     */
-    private $repository;
+    private ?EntityRepository $repository;
 
     /**
      * Constructs an instance of this class.
@@ -77,9 +65,9 @@ abstract class AbstractRepository
      */
     public function tableExists(): bool
     {
-        $schemaManager = $this->getManager()->getConnection()->getSchemaManager();
+        $schemaManager = $this->getManager()->getConnection()->createSchemaManager();
 
-        return $schemaManager !== null && $schemaManager->tablesExist([$this->getTableName()]);
+        return $schemaManager->tablesExist([$this->getTableName()]);
     }
 
     /**

@@ -11,10 +11,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class EnableFiltersListener implements EventSubscriberInterface
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
 
     /**
      * Constructs an instance of this class.

@@ -18,15 +18,9 @@ use Doctrine\ORM\Mapping\ClassMetadataInfo;
  */
 abstract class AbstractPrefixListener implements EventSubscriber
 {
-    /**
-     * @var string
-     */
-    private $prefix;
+    private string $prefix;
 
-    /**
-     * @var string
-     */
-    private $namespace;
+    private string $namespace;
 
     /**
      * Constructs an instance of this class.
@@ -98,7 +92,6 @@ abstract class AbstractPrefixListener implements EventSubscriber
                     $classMetadata->setIdGenerator($sequenceGenerator);
                 }
             } elseif ($classMetadata->isIdGeneratorIdentity()) {
-                $sequenceName = null;
                 $fieldName = $classMetadata->identifier ? $classMetadata->getSingleIdentifierFieldName() : null;
                 $columnName = $classMetadata->getSingleIdentifierColumnName();
                 $sequenceName = $classMetadata->getTableName() . '_' . $columnName . '_seq';

@@ -15,7 +15,7 @@ class SoftDeleteableFilter extends SQLFilter
      */
     private $disabled = [];
 
-    public function addFilterConstraint(ClassMetadata $targetEntity, $targetTableAlias)
+    public function addFilterConstraint(ClassMetadata $targetEntity, $targetTableAlias): string
     {
         $class = $targetEntity->getName();
 
@@ -27,10 +27,7 @@ class SoftDeleteableFilter extends SQLFilter
             return '';
         }
 
-        $connection = $this->getConnection();
-        $platform = $connection->getDatabasePlatform();
-
-        return $platform->getIsNullExpression($targetTableAlias . '.' . $targetEntity->getColumnName('deletedAt'));
+        return $targetTableAlias . '.' . $targetEntity->getColumnName('deletedAt') . ' IS NULL';
     }
 
     public function disableForEntity(string $class): void
