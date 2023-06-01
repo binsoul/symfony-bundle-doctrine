@@ -10,6 +10,7 @@ use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\Persistence\ManagerRegistry;
 use RuntimeException;
+use Throwable;
 
 /**
  * Provides basic methods for repositories.
@@ -67,7 +68,11 @@ abstract class AbstractRepository
     {
         $schemaManager = $this->getManager()->getConnection()->createSchemaManager();
 
-        return $schemaManager->tablesExist([$this->getTableName()]);
+        try {
+            return $schemaManager->tablesExist([$this->getTableName()]);
+        } catch (Throwable $t) {
+            return false;
+        }
     }
 
     /**
