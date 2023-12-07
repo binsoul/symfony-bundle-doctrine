@@ -9,3 +9,12 @@ services:
 
     BinSoul\Symfony\Bundle\Doctrine\EventListener\EnableFiltersListener:
         tags: ['kernel.event_subscriber']
+
+    BinSoul\Symfony\Bundle\Doctrine\EventListener\LinkableListener:
+        public: true
+
+    BinSoul\Symfony\Bundle\Doctrine\EventListener\SoftDeleteableListener:
+        public: true
+
+    BinSoul\Symfony\Bundle\Doctrine\EventListener\TimestampableListener:
+        public: true
