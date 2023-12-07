@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace BinSoul\Symfony\Bundle\Doctrine\EventListener;
 
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
-use Doctrine\Common\EventSubscriber;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Events;
@@ -18,7 +17,7 @@ use Doctrine\ORM\Mapping\ClassMetadataInfo;
  * Adds a prefix to all tables of a namespace.
  */
 #[AsDoctrineListener(event: Events::loadClassMetadata)]
-abstract class AbstractPrefixListener implements EventSubscriber
+abstract class AbstractPrefixListener
 {
     private string $prefix;
 
