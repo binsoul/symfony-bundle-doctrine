@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace BinSoul\Symfony\Bundle\Doctrine\EventListener;
 
 use BinSoul\Symfony\Bundle\Doctrine\Behavior\Linkable;
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
 
-final class LinkableListener implements EventSubscriber
+#[AsDoctrineListener(event: Events::onFlush)]
+final class LinkableListener
 {
     public function onFlush(OnFlushEventArgs $args): void
     {
-        $em = $args->getEntityManager();
+        $em = $args->getObjectManager();
         $unitOfWork = $em->getUnitOfWork();
 
         foreach ($unitOfWork->getScheduledEntityInsertions() as $entity) {
@@ -54,13 +55,5 @@ final class LinkableListener implements EventSubscriber
             $unitOfWork->persist($linkedObject);
             $unitOfWork->recomputeSingleEntityChangeSet($metadata, $linkedObject);
         }
-    }
-
-    /**
-     * @return array<int, string>
-     */
-    public function getSubscribedEvents(): array
-    {
-        return [Events::onFlush];
     }
 }

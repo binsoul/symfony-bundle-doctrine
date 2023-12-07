@@ -6,17 +6,18 @@ namespace BinSoul\Symfony\Bundle\Doctrine\EventListener;
 
 use BinSoul\Symfony\Bundle\Doctrine\Behavior\SoftDeleteable;
 use BinSoul\Symfony\Bundle\Doctrine\Behavior\TimestampableTrait;
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
 
-final class SoftDeleteableListener implements EventSubscriber
+#[AsDoctrineListener(event: Events::onFlush)]
+final class SoftDeleteableListener
 {
     use TimestampableTrait;
 
     public function onFlush(OnFlushEventArgs $eventArgs): void
     {
-        $em = $eventArgs->getEntityManager();
+        $em = $eventArgs->getObjectManager();
         $unitOfWork = $em->getUnitOfWork();
 
         foreach ($unitOfWork->getScheduledEntityDeletions() as $entity) {
@@ -31,13 +32,5 @@ final class SoftDeleteableListener implements EventSubscriber
             $unitOfWork->persist($entity);
             $unitOfWork->recomputeSingleEntityChangeSet($metadata, $entity);
         }
-    }
-
-    /**
-     * @return array<int, string>
-     */
-    public function getSubscribedEvents(): array
-    {
-        return [Events::onFlush];
     }
 }

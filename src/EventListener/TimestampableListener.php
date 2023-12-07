@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace BinSoul\Symfony\Bundle\Doctrine\EventListener;
 
 use BinSoul\Symfony\Bundle\Doctrine\Behavior\Timestampable;
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Events;
 
-final class TimestampableListener implements EventSubscriber
+#[AsDoctrineListener(event: Events::loadClassMetadata)]
+final class TimestampableListener
 {
     public function loadClassMetadata(LoadClassMetadataEventArgs $loadClassMetadataEventArgs): void
     {
@@ -25,13 +26,5 @@ final class TimestampableListener implements EventSubscriber
 
         $classMetadata->addLifecycleCallback('updateTimestamps', Events::prePersist);
         $classMetadata->addLifecycleCallback('updateTimestamps', Events::preUpdate);
-    }
-
-    /**
-     * @return array<int, string>
-     */
-    public function getSubscribedEvents(): array
-    {
-        return [Events::loadClassMetadata];
     }
 }
