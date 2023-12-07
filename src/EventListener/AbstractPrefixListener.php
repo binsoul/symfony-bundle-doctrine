@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace BinSoul\Symfony\Bundle\Doctrine\EventListener;
 
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
@@ -16,6 +17,7 @@ use Doctrine\ORM\Mapping\ClassMetadataInfo;
 /**
  * Adds a prefix to all tables of a namespace.
  */
+#[AsDoctrineListener(event: Events::loadClassMetadata)]
 abstract class AbstractPrefixListener implements EventSubscriber
 {
     private string $prefix;
@@ -31,11 +33,6 @@ abstract class AbstractPrefixListener implements EventSubscriber
         $this->namespace = trim($namespace);
     }
 
-    public function getSubscribedEvents(): array
-    {
-        return [Events::loadClassMetadata];
-    }
-
     public function loadClassMetadata(LoadClassMetadataEventArgs $args): void
     {
         if ($this->prefix === '') {
@@ -44,7 +41,7 @@ abstract class AbstractPrefixListener implements EventSubscriber
 
         $classMetadata = $args->getClassMetadata();
 
-        if (strpos($classMetadata->namespace, $this->namespace) !== 0) {
+        if (! str_starts_with($classMetadata->namespace, $this->namespace)) {
             return;
         }
 
@@ -96,7 +93,11 @@ abstract class AbstractPrefixListener implements EventSubscriber
                 $columnName = $classMetadata->getSingleIdentifierColumnName();
                 $sequenceName = $classMetadata->getTableName() . '_' . $columnName . '_seq';
 
-                $definition = ['sequenceName' => $platform->fixSchemaElementName($sequenceName)];
+                if (method_exists($platform, 'fixSchemaElementName')) {
+                    $definition = ['sequenceName' => $platform->fixSchemaElementName($sequenceName)];
+                } else {
+                    $definition = ['sequenceName' => $sequenceName];
+                }
 
                 if (isset($classMetadata->fieldMappings[$fieldName]['quoted']) || isset($classMetadata->table['quoted'])) {
                     $definition['quoted'] = true;
@@ -119,7 +120,7 @@ abstract class AbstractPrefixListener implements EventSubscriber
 
     private function addPrefix(string $name): string
     {
-        if (strpos($name, $this->prefix) === 0) {
+        if (str_starts_with($name, $this->prefix)) {
             return $name;
         }
 
