@@ -15,7 +15,7 @@ class SoftDeleteableFilter extends SQLFilter
      */
     private array $disabled = [];
 
-    public function addFilterConstraint(ClassMetadata $targetEntity, $targetTableAlias): string
+    public function addFilterConstraint(ClassMetadata $targetEntity, string $targetTableAlias): string
     {
         $class = $targetEntity->getName();
 
@@ -23,7 +23,7 @@ class SoftDeleteableFilter extends SQLFilter
             return '';
         }
 
-        if (! $targetEntity->hasField('deletedAt') || ! $targetEntity->reflClass->implementsInterface(SoftDeleteable::class)) {
+        if ($targetEntity->reflClass === null || ! $targetEntity->hasField('deletedAt') || ! $targetEntity->reflClass->implementsInterface(SoftDeleteable::class)) {
             return '';
         }
 

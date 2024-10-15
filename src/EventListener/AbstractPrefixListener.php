@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace BinSoul\Symfony\Bundle\Doctrine\EventListener;
 
-use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
+use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Id\BigIntegerIdentityGenerator;
 use Doctrine\ORM\Id\IdentityGenerator;
@@ -37,7 +37,7 @@ abstract class AbstractPrefixListener
 
         $classMetadata = $args->getClassMetadata();
 
-        if (! str_starts_with($classMetadata->namespace, $this->namespace)) {
+        if ($classMetadata->namespace === null || ! str_starts_with($classMetadata->namespace, $this->namespace)) {
             return;
         }
 
@@ -65,7 +65,7 @@ abstract class AbstractPrefixListener
         $em = $args->getEntityManager();
         $platform = $em->getConnection()->getDatabasePlatform();
 
-        if ($platform instanceof PostgreSqlPlatform) {
+        if ($platform instanceof PostgreSQLPlatform) {
             if ($classMetadata->isIdGeneratorSequence()) {
                 $newDefinition = $classMetadata->sequenceGeneratorDefinition;
                 $newDefinition['sequenceName'] = $this->addPrefix($newDefinition['sequenceName']);
