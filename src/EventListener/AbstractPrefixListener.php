@@ -9,7 +9,7 @@ use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Id\BigIntegerIdentityGenerator;
 use Doctrine\ORM\Id\IdentityGenerator;
 use Doctrine\ORM\Id\SequenceGenerator;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\ORM\Mapping\ClassMetadata;
 
 /**
  * Adds a prefix to all tables of a namespace.
@@ -55,7 +55,7 @@ abstract class AbstractPrefixListener
         }
 
         foreach ($classMetadata->getAssociationMappings() as $fieldName => $mapping) {
-            if ($mapping['type'] === ClassMetadataInfo::MANY_TO_MANY && isset($classMetadata->associationMappings[$fieldName]['joinTable']['name'])) {
+            if ($mapping['type'] === ClassMetadata::MANY_TO_MANY && isset($classMetadata->associationMappings[$fieldName]['joinTable']['name'])) {
                 $mappedTableName = $classMetadata->associationMappings[$fieldName]['joinTable']['name'];
                 $classMetadata->associationMappings[$fieldName]['joinTable']['name'] = $this->addPrefix($mappedTableName);
             }
@@ -86,28 +86,10 @@ abstract class AbstractPrefixListener
                 }
             } elseif ($classMetadata->isIdGeneratorIdentity()) {
                 $fieldName = $classMetadata->identifier ? $classMetadata->getSingleIdentifierFieldName() : null;
-                $columnName = $classMetadata->getSingleIdentifierColumnName();
-                $sequenceName = $classMetadata->getTableName() . '_' . $columnName . '_seq';
-
-                if (method_exists($platform, 'fixSchemaElementName')) {
-                    $definition = ['sequenceName' => $platform->fixSchemaElementName($sequenceName)];
-                } else {
-                    $definition = ['sequenceName' => $sequenceName];
-                }
-
-                if (isset($classMetadata->fieldMappings[$fieldName]['quoted']) || isset($classMetadata->table['quoted'])) {
-                    $definition['quoted'] = true;
-                }
-
-                $sequenceName = $em->getConfiguration()->getQuoteStrategy()->getSequenceName(
-                    $definition,
-                    $classMetadata,
-                    $platform
-                );
 
                 $generator = $fieldName && $classMetadata->fieldMappings[$fieldName]['type'] === 'bigint'
-                    ? new BigIntegerIdentityGenerator($sequenceName)
-                    : new IdentityGenerator($sequenceName);
+                    ? new BigIntegerIdentityGenerator()
+                    : new IdentityGenerator();
 
                 $classMetadata->setIdGenerator($generator);
             }

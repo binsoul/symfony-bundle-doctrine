@@ -70,7 +70,7 @@ abstract class AbstractRepository
 
         try {
             return $schemaManager->tablesExist([$this->getTableName()]);
-        } catch (Throwable $t) {
+        } catch (Throwable) {
             return false;
         }
     }
