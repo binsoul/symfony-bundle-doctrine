@@ -14,19 +14,29 @@ use Throwable;
 
 /**
  * Provides basic methods for repositories.
+ *
+ * @template T of object
  */
 abstract class AbstractRepository
 {
+    /**
+     * @var class-string<T>
+     */
     private string $entityClass;
 
     private ManagerRegistry $registry;
 
     private ?EntityManager $manager = null;
 
+    /**
+     * @var EntityRepository<T>|null
+     */
     private ?EntityRepository $repository = null;
 
     /**
      * Constructs an instance of this class.
+     *
+     * @param class-string<T> $entityClass
      */
     public function __construct(string $entityClass, ManagerRegistry $registry)
     {
@@ -77,6 +87,8 @@ abstract class AbstractRepository
 
     /**
      * Returns a EntityRepository instance.
+     *
+     * @return EntityRepository<T>
      */
     protected function getRepository(): EntityRepository
     {
