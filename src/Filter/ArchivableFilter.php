@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace BinSoul\Symfony\Bundle\Doctrine\Filter;
 
-use BinSoul\Symfony\Bundle\Doctrine\Behavior\SoftDeleteable;
+use BinSoul\Symfony\Bundle\Doctrine\Behavior\Archivable;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Query\Filter\SQLFilter;
 
-class SoftDeleteableFilter extends SQLFilter
+class ArchivableFilter extends SQLFilter
 {
     private bool $disabled = false;
 
@@ -29,11 +29,11 @@ class SoftDeleteableFilter extends SQLFilter
             return '';
         }
 
-        if ($targetEntity->reflClass === null || ! $targetEntity->hasField('deletedAt') || ! $targetEntity->reflClass->implementsInterface(SoftDeleteable::class)) {
+        if ($targetEntity->reflClass === null || ! $targetEntity->hasField('archivedAt') || ! $targetEntity->reflClass->implementsInterface(Archivable::class)) {
             return '';
         }
 
-        return $targetTableAlias . '.' . $targetEntity->getColumnName('deletedAt') . ' IS NULL';
+        return $targetTableAlias . '.' . $targetEntity->getColumnName('archivedAt') . ' IS NULL';
     }
 
     public function disable(): void

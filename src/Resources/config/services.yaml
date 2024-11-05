@@ -16,5 +16,8 @@ services:
     BinSoul\Symfony\Bundle\Doctrine\EventListener\SoftDeleteableListener:
         public: true
 
+    BinSoul\Symfony\Bundle\Doctrine\EventListener\ArchivableListener:
+        public: true
+
     BinSoul\Symfony\Bundle\Doctrine\EventListener\TimestampableListener:
         public: true
