@@ -95,13 +95,7 @@ abstract class AbstractRepository
         $this->checkManager();
 
         if ($this->repository === null) {
-            $repository = $this->getManager()->getRepository($this->entityClass);
-
-            if (! $repository instanceof EntityRepository) {
-                throw new RuntimeException(sprintf('Manager returned %s.', get_class($repository)));
-            }
-
-            $this->repository = $repository;
+            $this->repository = $this->getManager()->getRepository($this->entityClass);
         }
 
         return $this->repository;
@@ -151,13 +145,7 @@ abstract class AbstractRepository
 
         foreach ($this->registry->getManagers() as $name => $object) {
             if ($object === $this->manager) {
-                $manager = $this->registry->resetManager($name);
-
-                if (! $manager instanceof EntityManager) {
-                    throw new RuntimeException(sprintf('Registry returned %s.', get_class($manager)));
-                }
-
-                $this->manager = $manager;
+                $this->manager = $this->registry->resetManager($name);
 
                 break;
             }
