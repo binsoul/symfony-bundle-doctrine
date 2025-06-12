@@ -8,10 +8,14 @@ use BinSoul\Symfony\Bundle\Doctrine\Behavior\Timestampable;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Events;
+use Doctrine\ORM\Mapping\MappingException;
 
 #[AsDoctrineListener(event: Events::loadClassMetadata)]
 final class TimestampableListener
 {
+    /**
+     * @throws MappingException
+     */
     public function loadClassMetadata(LoadClassMetadataEventArgs $loadClassMetadataEventArgs): void
     {
         $classMetadata = $loadClassMetadataEventArgs->getClassMetadata();

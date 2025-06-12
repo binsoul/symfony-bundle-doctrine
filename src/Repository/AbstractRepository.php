@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace BinSoul\Symfony\Bundle\Doctrine\Repository;
 
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Exception\ORMException;
@@ -76,7 +77,11 @@ abstract class AbstractRepository
      */
     public function tableExists(): bool
     {
-        $schemaManager = $this->getManager()->getConnection()->createSchemaManager();
+        try {
+            $schemaManager = $this->getManager()->getConnection()->createSchemaManager();
+        } catch (Exception) {
+            return false;
+        }
 
         try {
             return $schemaManager->tablesExist([$this->getTableName()]);

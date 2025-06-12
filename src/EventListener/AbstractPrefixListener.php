@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace BinSoul\Symfony\Bundle\Doctrine\EventListener;
 
+use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Id\BigIntegerIdentityGenerator;
 use Doctrine\ORM\Id\IdentityGenerator;
 use Doctrine\ORM\Id\SequenceGenerator;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Mapping\MappingException;
 
 /**
  * Adds a prefix to all tables of a namespace.
@@ -29,6 +31,10 @@ abstract class AbstractPrefixListener
         $this->namespace = trim($namespace);
     }
 
+    /**
+     * @throws MappingException
+     * @throws Exception
+     */
     public function loadClassMetadata(LoadClassMetadataEventArgs $args): void
     {
         if ($this->prefix === '') {

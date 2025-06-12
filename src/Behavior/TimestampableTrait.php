@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace BinSoul\Symfony\Bundle\Doctrine\Behavior;
 
+use DateInvalidTimeZoneException;
 use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
@@ -19,7 +20,11 @@ trait TimestampableTrait
             throw new RuntimeException('Could not generate \DateTime.');
         }
 
-        $dateTime->setTimezone(new DateTimeZone(date_default_timezone_get()));
+        try {
+            $dateTime->setTimezone(new DateTimeZone(date_default_timezone_get()));
+        } catch (DateInvalidTimeZoneException) {
+            $dateTime->setTimezone(new DateTimeZone('UTC'));
+        }
 
         return $dateTime;
     }
