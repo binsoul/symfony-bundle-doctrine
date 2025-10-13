@@ -19,7 +19,7 @@
     ],
     "require": {
         "php": ">=8.3",
-        "doctrine/doctrine-bundle": "^2",
+        "doctrine/doctrine-bundle": "^2|^3",
         "doctrine/orm": "^3",
         "doctrine/persistence": "^3|^4",
         "symfony/config": "^7",
