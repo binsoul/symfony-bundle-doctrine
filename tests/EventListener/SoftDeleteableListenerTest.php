@@ -24,7 +24,7 @@ class SoftDeleteableListenerTest extends TestCase
         $entity->expects($this->once())
             ->method('deleteSoft');
 
-        $classMetadata = $this->createMock(ClassMetadata::class);
+        $classMetadata = $this->createStub(ClassMetadata::class);
 
         $unitOfWork = $this->createMock(UnitOfWork::class);
         $unitOfWork
@@ -67,7 +67,7 @@ class SoftDeleteableListenerTest extends TestCase
 
     public function test_class_without_interface(): void
     {
-        $entity = $this->createMock(Timestampable::class);
+        $entity = $this->createStub(Timestampable::class);
 
         $unitOfWork = $this->createMock(UnitOfWork::class);
         $unitOfWork

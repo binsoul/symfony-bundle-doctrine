@@ -14,7 +14,7 @@ class SoftDeleteableFilterTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->filter = new SoftDeleteableFilter($this->createMock(\Doctrine\ORM\EntityManager::class));
+        $this->filter = new SoftDeleteableFilter($this->createStub(\Doctrine\ORM\EntityManager::class));
     }
 
     /**
@@ -68,9 +68,9 @@ class SoftDeleteableFilterTest extends TestCase
 
     private function buildClassMetadata(bool $hasDeletedAtField, bool $implementsSoftDeleteable): ClassMetadata
     {
-        $classMetadata = $this->createMock(ClassMetadata::class);
+        $classMetadata = $this->createStub(ClassMetadata::class);
         $classMetadata->rootEntityName = ClassMetadata::class;
-        $classMetadata->reflClass = $this->createMock(ReflectionClass::class);
+        $classMetadata->reflClass = $this->createStub(ReflectionClass::class);
         $classMetadata
             ->method('getName')
             ->willReturn(ClassMetadata::class);

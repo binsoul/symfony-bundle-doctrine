@@ -45,7 +45,7 @@ class TimestampableListenerTest extends TestCase
     private function buildClassMetadata(string $entityClass, bool $hasInterface): ClassMetadata
     {
         $classMetadata = new ClassMetadata($entityClass);
-        $classMetadata->reflClass = $this->createMock(ReflectionClass::class);
+        $classMetadata->reflClass = $this->createStub(ReflectionClass::class);
 
         $classMetadata->reflClass
             ->method('implementsInterface')
@@ -57,7 +57,7 @@ class TimestampableListenerTest extends TestCase
 
     private function buildLoadClassMetadataEventArgs(ClassMetadata $classMetadata): LoadClassMetadataEventArgs
     {
-        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager = $this->createStub(EntityManagerInterface::class);
 
         return new LoadClassMetadataEventArgs($classMetadata, $entityManager);
     }
