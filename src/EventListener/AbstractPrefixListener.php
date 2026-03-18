@@ -61,6 +61,10 @@ abstract class AbstractPrefixListener
         }
 
         foreach ($classMetadata->getAssociationMappings() as $fieldName => $mapping) {
+            if ($mapping['type'] !== ClassMetadata::MANY_TO_MANY) {
+                continue;
+            }
+
             if (! is_array($classMetadata->associationMappings[$fieldName]['joinTable'])) {
                 continue;
             }
@@ -69,10 +73,8 @@ abstract class AbstractPrefixListener
                 continue;
             }
 
-            if ($mapping['type'] === ClassMetadata::MANY_TO_MANY) {
-                $mappedTableName = $classMetadata->associationMappings[$fieldName]['joinTable']['name'];
-                $classMetadata->associationMappings[$fieldName]['joinTable']['name'] = $this->addPrefix($mappedTableName);
-            }
+            $mappedTableName = $classMetadata->associationMappings[$fieldName]['joinTable']['name'];
+            $classMetadata->associationMappings[$fieldName]['joinTable']['name'] = $this->addPrefix($mappedTableName);
         }
 
         // Generate sequences
