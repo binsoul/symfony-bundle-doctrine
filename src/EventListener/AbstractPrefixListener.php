@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping\MappingException;
 /**
  * Adds a prefix to all tables of a namespace.
  */
-abstract readonly class AbstractPrefixListener
+abstract class AbstractPrefixListener
 {
     private string $prefix;
 
