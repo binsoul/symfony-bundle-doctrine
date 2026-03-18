@@ -20,13 +20,6 @@ use Throwable;
  */
 abstract class AbstractRepository
 {
-    /**
-     * @var class-string<T>
-     */
-    private string $entityClass;
-
-    private ManagerRegistry $registry;
-
     private ?EntityManager $manager = null;
 
     /**
@@ -39,10 +32,10 @@ abstract class AbstractRepository
      *
      * @param class-string<T> $entityClass
      */
-    public function __construct(string $entityClass, ManagerRegistry $registry)
-    {
-        $this->entityClass = $entityClass;
-        $this->registry = $registry;
+    public function __construct(
+        private readonly string $entityClass,
+        private readonly ManagerRegistry $registry
+    ) {
     }
 
     /**
@@ -117,7 +110,7 @@ abstract class AbstractRepository
             $manager = $this->registry->getManagerForClass($this->entityClass) ?? $this->registry->getManager();
 
             if (! $manager instanceof EntityManager) {
-                throw new RuntimeException(sprintf('Registry returned %s.', get_class($manager)));
+                throw new RuntimeException(sprintf('Registry returned %s.', $manager::class));
             }
 
             $this->manager = $manager;
@@ -139,7 +132,7 @@ abstract class AbstractRepository
         $manager = $this->registry->getManagerForClass($this->entityClass) ?? $this->registry->getManager();
 
         if (! $manager instanceof EntityManager) {
-            throw new RuntimeException(sprintf('Registry returned %s.', get_class($manager)));
+            throw new RuntimeException(sprintf('Registry returned %s.', $manager::class));
         }
 
         $this->manager = $manager;
@@ -150,7 +143,13 @@ abstract class AbstractRepository
 
         foreach ($this->registry->getManagers() as $name => $object) {
             if ($object === $this->manager) {
-                $this->manager = $this->registry->resetManager($name);
+                $manager = $this->registry->resetManager($name);
+
+                if (! $manager instanceof EntityManager) {
+                    throw new RuntimeException(sprintf('Registry returned %s.', $manager::class));
+                }
+
+                $this->manager = $manager;
 
                 break;
             }

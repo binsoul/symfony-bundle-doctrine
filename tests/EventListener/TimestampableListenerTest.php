@@ -13,7 +13,7 @@ use ReflectionClass;
 
 class TimestampableListenerTest extends TestCase
 {
-    private $timestampableListener;
+    private TimestampableListener $timestampableListener;
 
     protected function setUp(): void
     {
@@ -42,10 +42,15 @@ class TimestampableListenerTest extends TestCase
         $this->assertArrayHasKey(Events::preUpdate, $classMetadata->lifecycleCallbacks);
     }
 
+    /**
+     * @param class-string $entityClass
+     *
+     * @return ClassMetadata<object>
+     */
     private function buildClassMetadata(string $entityClass, bool $hasInterface): ClassMetadata
     {
         $classMetadata = new ClassMetadata($entityClass);
-        $classMetadata->reflClass = $this->createStub(ReflectionClass::class);
+        $classMetadata->reflClass = $this->createMock(ReflectionClass::class);
 
         $classMetadata->reflClass
             ->method('implementsInterface')
@@ -55,6 +60,9 @@ class TimestampableListenerTest extends TestCase
         return $classMetadata;
     }
 
+    /**
+     * @param ClassMetadata<object> $classMetadata
+     */
     private function buildLoadClassMetadataEventArgs(ClassMetadata $classMetadata): LoadClassMetadataEventArgs
     {
         $entityManager = $this->createStub(EntityManagerInterface::class);

@@ -17,7 +17,7 @@ class SoftDeleteableFilter extends SQLFilter
      */
     private array $disabledClasses = [];
 
-    public function addFilterConstraint(ClassMetadata $targetEntity, $targetTableAlias): string
+    public function addFilterConstraint(ClassMetadata $targetEntity, string $targetTableAlias): string
     {
         $class = $targetEntity->getName();
 

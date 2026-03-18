@@ -25,7 +25,7 @@ final class LinkableListener
             $linkedObject = $entity->getLinkedObject();
             $linkedObject->linkedObjectCreated($entity);
 
-            $metadata = $em->getClassMetadata(get_class($linkedObject));
+            $metadata = $em->getClassMetadata($linkedObject::class);
             $unitOfWork->persist($linkedObject);
             $unitOfWork->recomputeSingleEntityChangeSet($metadata, $linkedObject);
         }
@@ -38,7 +38,7 @@ final class LinkableListener
             $linkedObject = $entity->getLinkedObject();
             $linkedObject->linkedObjectUpdated($entity);
 
-            $metadata = $em->getClassMetadata(get_class($linkedObject));
+            $metadata = $em->getClassMetadata($linkedObject::class);
             $unitOfWork->persist($linkedObject);
             $unitOfWork->recomputeSingleEntityChangeSet($metadata, $linkedObject);
         }
@@ -51,7 +51,7 @@ final class LinkableListener
             $linkedObject = $entity->getLinkedObject();
             $linkedObject->linkedObjectDeleted($entity);
 
-            $metadata = $em->getClassMetadata(get_class($linkedObject));
+            $metadata = $em->getClassMetadata($linkedObject::class);
             $unitOfWork->persist($linkedObject);
             $unitOfWork->recomputeSingleEntityChangeSet($metadata, $linkedObject);
         }

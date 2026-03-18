@@ -10,16 +10,14 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-class EnableFiltersListener implements EventSubscriberInterface
+readonly class EnableFiltersListener implements EventSubscriberInterface
 {
-    private EntityManagerInterface $entityManager;
-
     /**
      * Constructs an instance of this class.
      */
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
+    public function __construct(
+        private EntityManagerInterface $entityManager
+    ) {
     }
 
     /**

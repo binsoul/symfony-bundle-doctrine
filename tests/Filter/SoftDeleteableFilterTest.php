@@ -66,11 +66,14 @@ class SoftDeleteableFilterTest extends TestCase
         $this->assertSame('alias.deleted_at IS NULL', $result);
     }
 
+    /**
+     * @return ClassMetadata<object>
+     */
     private function buildClassMetadata(bool $hasDeletedAtField, bool $implementsSoftDeleteable): ClassMetadata
     {
-        $classMetadata = $this->createStub(ClassMetadata::class);
+        $classMetadata = $this->createMock(ClassMetadata::class);
         $classMetadata->rootEntityName = ClassMetadata::class;
-        $classMetadata->reflClass = $this->createStub(ReflectionClass::class);
+        $classMetadata->reflClass = $implementsSoftDeleteable ? $this->createMock(ReflectionClass::class) : $this->createStub(ReflectionClass::class);
         $classMetadata
             ->method('getName')
             ->willReturn(ClassMetadata::class);

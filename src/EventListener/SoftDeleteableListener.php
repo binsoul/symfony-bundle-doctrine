@@ -28,7 +28,7 @@ final class SoftDeleteableListener
             $entity->setDeletedAt($this->getTimestamp());
             $entity->deleteSoft();
 
-            $metadata = $em->getClassMetadata(get_class($entity));
+            $metadata = $em->getClassMetadata($entity::class);
             $unitOfWork->persist($entity);
             $unitOfWork->recomputeSingleEntityChangeSet($metadata, $entity);
         }

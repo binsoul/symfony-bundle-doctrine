@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping\MappingException;
 /**
  * Adds a prefix to all tables of a namespace.
  */
-abstract class AbstractPrefixListener
+abstract readonly class AbstractPrefixListener
 {
     private string $prefix;
 
@@ -61,7 +61,15 @@ abstract class AbstractPrefixListener
         }
 
         foreach ($classMetadata->getAssociationMappings() as $fieldName => $mapping) {
-            if ($mapping['type'] === ClassMetadata::MANY_TO_MANY && isset($classMetadata->associationMappings[$fieldName]['joinTable']['name'])) {
+            if (! is_array($classMetadata->associationMappings[$fieldName]['joinTable'])) {
+                continue;
+            }
+
+            if (! is_string($classMetadata->associationMappings[$fieldName]['joinTable']['name'] ?? null)) {
+                continue;
+            }
+
+            if ($mapping['type'] === ClassMetadata::MANY_TO_MANY) {
                 $mappedTableName = $classMetadata->associationMappings[$fieldName]['joinTable']['name'];
                 $classMetadata->associationMappings[$fieldName]['joinTable']['name'] = $this->addPrefix($mappedTableName);
             }
@@ -85,7 +93,7 @@ abstract class AbstractPrefixListener
                             $classMetadata,
                             $platform
                         ),
-                        $newDefinition['allocationSize']
+                        (int) $newDefinition['allocationSize']
                     );
 
                     $classMetadata->setIdGenerator($sequenceGenerator);
