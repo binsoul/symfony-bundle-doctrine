@@ -3,7 +3,6 @@
 namespace BinSoul\Test\Symfony\Bundle\Doctrine\EventListener;
 
 use BinSoul\Symfony\Bundle\Doctrine\Behavior\SoftDeleteable;
-use BinSoul\Symfony\Bundle\Doctrine\Behavior\Timestampable;
 use BinSoul\Symfony\Bundle\Doctrine\EventListener\SoftDeleteableListener;
 use DateTimeInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,14 +15,7 @@ class SoftDeleteableListenerTest extends TestCase
 {
     public function test_valid_softdeletable(): void
     {
-        $entity = $this->createMock(SoftDeleteable::class);
-        $entity->expects($this->once())
-            ->method('setDeletedAt')
-            ->with($this->isInstanceOf(DateTimeInterface::class));
-
-        $entity->expects($this->once())
-            ->method('deleteSoft');
-
+        $entity = new SoftDeletableEntity();
         $classMetadata = $this->createStub(ClassMetadata::class);
 
         $unitOfWork = $this->createMock(UnitOfWork::class);
@@ -53,21 +45,18 @@ class SoftDeleteableListenerTest extends TestCase
             ->method('getClassMetadata')
             ->willReturn($classMetadata);
 
-        $eventArgs = $this->getMockBuilder(OnFlushEventArgs::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $eventArgs->expects($this->once())
-            ->method('getObjectManager')
-            ->willReturn($entityManager);
+        $eventArgs = new OnFlushEventArgs($entityManager);
 
         $listener = new SoftDeleteableListener();
         $listener->onFlush($eventArgs);
+
+        self::assertTrue($entity->deleteSoftCalled);
+        self::assertNotNull($entity->getDeletedAt());
     }
 
     public function test_class_without_interface(): void
     {
-        $entity = $this->createStub(Timestampable::class);
+        $entity = new NotSoftDeletableEntity();
 
         $unitOfWork = $this->createMock(UnitOfWork::class);
         $unitOfWork
@@ -86,15 +75,41 @@ class SoftDeleteableListenerTest extends TestCase
             ->method('getUnitOfWork')
             ->willReturn($unitOfWork);
 
-        $eventArgs = $this->getMockBuilder(OnFlushEventArgs::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $eventArgs->expects($this->once())
-            ->method('getObjectManager')
-            ->willReturn($entityManager);
+        $eventArgs = new OnFlushEventArgs($entityManager);
 
         $listener = new SoftDeleteableListener();
         $listener->onFlush($eventArgs);
     }
+}
+
+/**
+ * Concrete test entity implementing SoftDeleteable.
+ */
+class SoftDeletableEntity implements SoftDeleteable
+{
+    public bool $deleteSoftCalled = false;
+
+    private ?DateTimeInterface $deletedAt = null;
+
+    public function getDeletedAt(): ?DateTimeInterface
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?DateTimeInterface $deletedAt): void
+    {
+        $this->deletedAt = $deletedAt;
+    }
+
+    public function deleteSoft(): void
+    {
+        $this->deleteSoftCalled = true;
+    }
+}
+
+/**
+ * Plain test entity without SoftDeleteable behavior.
+ */
+class NotSoftDeletableEntity
+{
 }

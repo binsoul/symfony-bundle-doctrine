@@ -13,60 +13,58 @@ use ReflectionClass;
 
 class TimestampableListenerTest extends TestCase
 {
-    private TimestampableListener $timestampableListener;
-
-    protected function setUp(): void
+    public function test_load_class_metadata_for_timestampable(): void
     {
-        $this->timestampableListener = new TimestampableListener();
+        $classMetadata = $this->buildClassMetadata(true);
+        $eventArgs = new LoadClassMetadataEventArgs($classMetadata, $this->createStub(EntityManagerInterface::class));
+
+        $timestampableListener = new TimestampableListener();
+        $timestampableListener->loadClassMetadata($eventArgs);
+
+        $this->assertCount(1, $classMetadata->getLifecycleCallbacks(Events::prePersist));
+        $this->assertCount(1, $classMetadata->getLifecycleCallbacks(Events::preUpdate));
     }
 
     public function test_load_class_metadata_for_non_timestampable(): void
     {
-        $classMetadata = $this->buildClassMetadata(Timestampable::class, false);
-        $eventArgs = $this->buildLoadClassMetadataEventArgs($classMetadata);
+        $classMetadata = $this->buildClassMetadata(false);
+        $eventArgs = new LoadClassMetadataEventArgs($classMetadata, $this->createStub(EntityManagerInterface::class));
 
-        $this->timestampableListener->loadClassMetadata($eventArgs);
+        $timestampableListener = new TimestampableListener();
+        $timestampableListener->loadClassMetadata($eventArgs);
 
-        $this->assertCount(0, $classMetadata->lifecycleCallbacks);
-    }
-
-    public function test_load_class_metadata_for_timestampable(): void
-    {
-        $classMetadata = $this->buildClassMetadata(Timestampable::class, true);
-        $eventArgs = $this->buildLoadClassMetadataEventArgs($classMetadata);
-
-        $this->timestampableListener->loadClassMetadata($eventArgs);
-
-        $this->assertCount(2, $classMetadata->lifecycleCallbacks);
-        $this->assertArrayHasKey(Events::prePersist, $classMetadata->lifecycleCallbacks);
-        $this->assertArrayHasKey(Events::preUpdate, $classMetadata->lifecycleCallbacks);
+        $this->assertCount(0, $classMetadata->getLifecycleCallbacks(Events::prePersist));
+        $this->assertCount(0, $classMetadata->getLifecycleCallbacks(Events::preUpdate));
     }
 
     /**
-     * @param class-string $entityClass
-     *
      * @return ClassMetadata<object>
      */
-    private function buildClassMetadata(string $entityClass, bool $hasInterface): ClassMetadata
+    private function buildClassMetadata(bool $implementsInterface): ClassMetadata
     {
-        $classMetadata = new ClassMetadata($entityClass);
-        $classMetadata->reflClass = $this->createMock(ReflectionClass::class);
+        $entityClass = $implementsInterface ? TimestampableEntity::class : NotTimestampableEntity::class;
 
-        $classMetadata->reflClass
-            ->method('implementsInterface')
-            ->with(Timestampable::class)
-            ->willReturn($hasInterface);
+        $classMetadata = new ClassMetadata($entityClass);
+        $reflClass = new ReflectionClass($entityClass);
+        $classMetadata->reflClass = $reflClass;
 
         return $classMetadata;
     }
+}
 
-    /**
-     * @param ClassMetadata<object> $classMetadata
-     */
-    private function buildLoadClassMetadataEventArgs(ClassMetadata $classMetadata): LoadClassMetadataEventArgs
+/**
+ * Concrete test entity implementing Timestampable.
+ */
+class TimestampableEntity implements Timestampable
+{
+    public function updateTimestamps(): void
     {
-        $entityManager = $this->createStub(EntityManagerInterface::class);
-
-        return new LoadClassMetadataEventArgs($classMetadata, $entityManager);
     }
+}
+
+/**
+ * Plain test entity without Timestampable behavior.
+ */
+class NotTimestampableEntity
+{
 }
