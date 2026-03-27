@@ -20,7 +20,7 @@ final class TimestampableListener
     {
         $classMetadata = $loadClassMetadataEventArgs->getClassMetadata();
 
-        if ($classMetadata->reflClass === null || ! $classMetadata->reflClass->implementsInterface(Timestampable::class)) {
+        if (! $classMetadata->getReflectionClass()->implementsInterface(Timestampable::class)) {
             return;
         }
 
