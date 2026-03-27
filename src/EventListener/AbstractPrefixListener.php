@@ -7,10 +7,8 @@ namespace BinSoul\Symfony\Bundle\Doctrine\EventListener;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
-use Doctrine\ORM\Id\BigIntegerIdentityGenerator;
-use Doctrine\ORM\Id\IdentityGenerator;
 use Doctrine\ORM\Id\SequenceGenerator;
-use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Mapping\ManyToManyOwningSideMapping;
 use Doctrine\ORM\Mapping\MappingException;
 
 /**
@@ -60,21 +58,13 @@ abstract class AbstractPrefixListener
             }
         }
 
-        foreach ($classMetadata->getAssociationMappings() as $fieldName => $mapping) {
-            if ($mapping['type'] !== ClassMetadata::MANY_TO_MANY) {
+        foreach ($classMetadata->getAssociationMappings() as $mapping) {
+            if (! $mapping instanceof ManyToManyOwningSideMapping) {
                 continue;
             }
 
-            if (! is_array($classMetadata->associationMappings[$fieldName]['joinTable'])) {
-                continue;
-            }
-
-            if (! is_string($classMetadata->associationMappings[$fieldName]['joinTable']['name'] ?? null)) {
-                continue;
-            }
-
-            $mappedTableName = $classMetadata->associationMappings[$fieldName]['joinTable']['name'];
-            $classMetadata->associationMappings[$fieldName]['joinTable']['name'] = $this->addPrefix($mappedTableName);
+            $mappedTableName = $mapping->joinTable->name;
+            $mapping->joinTable->name = $this->addPrefix($mappedTableName);
         }
 
         // Generate sequences
