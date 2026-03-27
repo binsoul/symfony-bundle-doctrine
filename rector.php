@@ -28,8 +28,10 @@ return RectorConfig::configure()->withCache(__DIR__ . '/.cache/rector', FileCach
     typeDeclarations: true,
 )->withAttributesSets(
     symfony: true,
+    doctrine: true,
 )->withComposerBased(
     symfony: true,
+    doctrine: true,
 )->withRules(
     [
         RemoveAlwaysElseRector::class,
