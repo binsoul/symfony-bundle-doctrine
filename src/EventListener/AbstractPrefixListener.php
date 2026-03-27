@@ -41,7 +41,7 @@ abstract class AbstractPrefixListener
 
         $classMetadata = $args->getClassMetadata();
 
-        if ($classMetadata->namespace === null || ! str_starts_with($classMetadata->namespace, $this->namespace)) {
+        if (! str_starts_with($classMetadata->getName(), $this->namespace)) {
             return;
         }
 
@@ -90,14 +90,6 @@ abstract class AbstractPrefixListener
 
                     $classMetadata->setIdGenerator($sequenceGenerator);
                 }
-            } elseif ($classMetadata->isIdGeneratorIdentity()) {
-                $fieldName = $classMetadata->identifier ? $classMetadata->getSingleIdentifierFieldName() : null;
-
-                $generator = $fieldName && $classMetadata->fieldMappings[$fieldName]['type'] === 'bigint'
-                    ? new BigIntegerIdentityGenerator()
-                    : new IdentityGenerator();
-
-                $classMetadata->setIdGenerator($generator);
             }
         }
     }
