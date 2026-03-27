@@ -13,23 +13,21 @@ class SoftDeleteableFilter extends SQLFilter
     private bool $disabled = false;
 
     /**
-     * @var array<string, bool>
+     * @var array<class-string, bool>
      */
     private array $disabledClasses = [];
 
     public function addFilterConstraint(ClassMetadata $targetEntity, string $targetTableAlias): string
     {
-        $class = $targetEntity->getName();
-
         if ($this->disabled) {
             return '';
         }
 
-        if (array_key_exists($class, $this->disabledClasses) || array_key_exists($targetEntity->rootEntityName, $this->disabledClasses)) {
+        if ($this->disabledClasses !== [] && array_key_exists($targetEntity->getName(), $this->disabledClasses)) {
             return '';
         }
 
-        if ($targetEntity->reflClass === null || ! $targetEntity->hasField('deletedAt') || ! $targetEntity->reflClass->implementsInterface(SoftDeleteable::class)) {
+        if (! $targetEntity->hasField('deletedAt') || ! $targetEntity->getReflectionClass()->implementsInterface(SoftDeleteable::class)) {
             return '';
         }
 
@@ -46,6 +44,9 @@ class SoftDeleteableFilter extends SQLFilter
         $this->disabled = false;
     }
 
+    /**
+     * @param class-string $class
+     */
     public function disableForEntity(string $class): void
     {
         $this->disabledClasses[$class] = true;
@@ -53,6 +54,9 @@ class SoftDeleteableFilter extends SQLFilter
         $this->setParameter(sprintf('disabled_%s', $class), true);
     }
 
+    /**
+     * @param class-string $class
+     */
     public function enableForEntity(string $class): void
     {
         unset($this->disabledClasses[$class]);
