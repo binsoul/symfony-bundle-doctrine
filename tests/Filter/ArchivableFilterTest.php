@@ -1,22 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace BinSoul\Test\Symfony\Bundle\Doctrine\Filter;
 
-use BinSoul\Symfony\Bundle\Doctrine\Behavior\SoftDeleteable;
-use BinSoul\Symfony\Bundle\Doctrine\Filter\SoftDeleteableFilter;
+use BinSoul\Symfony\Bundle\Doctrine\Behavior\Archivable;
+use BinSoul\Symfony\Bundle\Doctrine\Filter\ArchivableFilter;
 use DateTimeInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
-class SoftDeleteableFilterTest extends TestCase
+class ArchivableFilterTest extends TestCase
 {
     /**
      * Test if it can be disabled globally.
      */
     public function test_can_be_disabled_globally(): void
     {
-        $filter = new SoftDeleteableFilter($this->createStub(\Doctrine\ORM\EntityManager::class));
+        $filter = new ArchivableFilter($this->createStub(EntityManagerInterface::class));
         $filter->disable();
 
         $classMetadata = $this->buildClassMetadata(true, true);
@@ -35,26 +38,26 @@ class SoftDeleteableFilterTest extends TestCase
      */
     public function test_can_be_disabled_for_entity(): void
     {
-        $filter = new SoftDeleteableFilter($this->createStub(\Doctrine\ORM\EntityManager::class));
-        $filter->disableForEntity(SoftDeleteableTestEntity::class);
+        $filter = new ArchivableFilter($this->createStub(EntityManagerInterface::class));
+        $filter->disableForEntity(ArchivableTestEntity::class);
 
         $classMetadata = $this->buildClassMetadata(true, true);
         $result = $filter->addFilterConstraint($classMetadata, 'alias');
 
         $this->assertEmpty($result);
 
-        $filter->enableForEntity(SoftDeleteableTestEntity::class);
+        $filter->enableForEntity(ArchivableTestEntity::class);
         $result = $filter->addFilterConstraint($classMetadata, 'alias');
 
         $this->assertNotEmpty($result);
     }
 
     /**
-     * Test if it returns empty string if class does not implements SoftDeleteable interface.
+     * Test if it returns empty string if class does not implements Archivable interface.
      */
-    public function test_returns_empty_string_if_class_does_not_implement_softdeleteable(): void
+    public function test_returns_empty_string_if_class_does_not_implement_archivable(): void
     {
-        $filter = new SoftDeleteableFilter($this->createStub(\Doctrine\ORM\EntityManager::class));
+        $filter = new ArchivableFilter($this->createStub(EntityManagerInterface::class));
         $classMetadata = $this->buildClassMetadata(true, false);
         $result = $filter->addFilterConstraint($classMetadata, 'test');
 
@@ -62,11 +65,11 @@ class SoftDeleteableFilterTest extends TestCase
     }
 
     /**
-     * Test if it returns empty string if class does not have a deletedAt field.
+     * Test if it returns empty string if class does not have a archivedAt field.
      */
-    public function test_returns_empty_string_if_class_does_not_have_deletedat_field(): void
+    public function test_returns_empty_string_if_class_does_not_have_archived_field(): void
     {
-        $filter = new SoftDeleteableFilter($this->createStub(\Doctrine\ORM\EntityManager::class));
+        $filter = new ArchivableFilter($this->createStub(\Doctrine\ORM\EntityManager::class));
         $classMetadata = $this->buildClassMetadata(false, true);
         $result = $filter->addFilterConstraint($classMetadata, 'test');
 
@@ -76,16 +79,16 @@ class SoftDeleteableFilterTest extends TestCase
     /**
      * @return ClassMetadata<object>
      */
-    private function buildClassMetadata(bool $hasDeletedAtField, bool $implementsSoftDeleteable): ClassMetadata
+    private function buildClassMetadata(bool $hasArchivedAtField, bool $implementsArchivable): ClassMetadata
     {
-        $entityClass = $implementsSoftDeleteable ? SoftDeleteableTestEntity::class : NotSoftDeleteableTestEntity::class;
+        $entityClass = $implementsArchivable ? ArchivableTestEntity::class : NotArchivableTestEntity::class;
         $classMetadata = new ClassMetadata($entityClass);
 
-        if ($hasDeletedAtField) {
+        if ($hasArchivedAtField) {
             $classMetadata->mapField([
-                'fieldName' => 'deletedAt',
+                'fieldName' => 'archivedAt',
                 'type' => 'datetime',
-                'columnName' => 'deleted_at',
+                'columnName' => 'archived_at',
             ]);
         }
 
@@ -99,18 +102,18 @@ class SoftDeleteableFilterTest extends TestCase
 /**
  * Test entity implementing SoftDeleteable for concrete ReflectionClass instances.
  */
-class SoftDeleteableTestEntity implements SoftDeleteable
+class ArchivableTestEntity implements Archivable
 {
-    public function getDeletedAt(): ?DateTimeInterface
+    public function getArchivedAt(): ?DateTimeInterface
     {
         return null;
     }
 
-    public function setDeletedAt(?DateTimeInterface $deletedAt): void
+    public function setArchivedAt(?DateTimeInterface $archivedAt): void
     {
     }
 
-    public function deleteSoft(): void
+    public function archive(): void
     {
     }
 }
@@ -118,6 +121,6 @@ class SoftDeleteableTestEntity implements SoftDeleteable
 /**
  * Plain test entity without any behavior interfaces.
  */
-class NotSoftDeleteableTestEntity
+class NotArchivableTestEntity
 {
 }
